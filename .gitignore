@@ -40,4 +40,5 @@ out/
 .env
 application-*.yml
 application-*.properties
+application.properties
 .DS_Store
