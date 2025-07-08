@@ -20,10 +20,5 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     // 제목 또는 내용으로 검색
     @Query("SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(p.content) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Post> findByTitleOrContentContaining(@Param("keyword") String keyword, Pageable pageable);
-    
-    // 조회수 상위 N개 게시글
-    List<Post> findTop10ByOrderByViewsDesc();
-    
-    // 최신 게시글 N개
-    List<Post> findTop10ByOrderByCreatedAtDesc();
+
 }
