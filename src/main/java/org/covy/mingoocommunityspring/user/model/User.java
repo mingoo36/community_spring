@@ -43,4 +43,9 @@ public class User {
         this.updatedAt = Instant.now();
     }
 
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
+
 }

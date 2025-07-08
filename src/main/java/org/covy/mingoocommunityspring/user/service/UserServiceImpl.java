@@ -3,11 +3,13 @@ package org.covy.mingoocommunityspring.user.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.covy.mingoocommunityspring.user.dto.UserRegisterDto;
+import org.covy.mingoocommunityspring.user.dto.UserUpdateRequestDto;
 import org.covy.mingoocommunityspring.user.model.User;
 import org.covy.mingoocommunityspring.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -39,6 +41,34 @@ public class UserServiceImpl implements UserService {
     public Optional<User> login(String email, String password) {
         return userRepository.findByEmail(email)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()));
+    }
+
+    @Override
+    @Transactional
+    public User updateUser(Integer userId, UserUpdateRequestDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        
+        // username 수정 (null이 아닌 경우에만)
+        if (dto.getUsername() != null && !dto.getUsername().trim().isEmpty()) {
+            user.setUsername(dto.getUsername().trim());
+        }
+        
+        // image 수정 (null이 아닌 경우에만)
+        if (dto.getImage() != null) {
+            user.setImage(dto.getImage().trim().isEmpty() ? null : dto.getImage().trim());
+        }
+        
+        // 수정 시간 업데이트
+        user.setUpdatedAt(Instant.now());
+        
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User getUserById(Integer userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
 
 

@@ -3,13 +3,17 @@ package org.covy.mingoocommunityspring.user.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.covy.mingoocommunityspring.config.auth.CurrentUserId;
 import org.covy.mingoocommunityspring.config.jwt.JwtTokenProvider;
 import org.covy.mingoocommunityspring.user.dto.LoginRequestDto;
 import org.covy.mingoocommunityspring.user.dto.LoginResponseDto;
 import org.covy.mingoocommunityspring.user.dto.UserRegisterDto;
 import org.covy.mingoocommunityspring.user.dto.UserResponseDto;
+import org.covy.mingoocommunityspring.user.dto.UserUpdateRequestDto;
 import org.covy.mingoocommunityspring.user.model.User;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.covy.mingoocommunityspring.user.service.LogoutService;
@@ -67,6 +71,41 @@ public class UserController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * GET /api/users/me
+     * 현재 로그인한 사용자 정보 조회
+     */
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getCurrentUser(@CurrentUserId Integer userId) {
+        User user = userService.getUserById(userId);
+        UserResponseDto response = new UserResponseDto(
+                user.getId(),
+                user.getEmail(),
+                user.getUsername(),
+                user.getImage()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * PUT /api/users/me
+     * 현재 로그인한 사용자 정보 수정
+     */
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDto> updateCurrentUser(
+            @Valid @RequestBody UserUpdateRequestDto requestDto,
+            @CurrentUserId Integer userId) {
+        
+        User updatedUser = userService.updateUser(userId, requestDto);
+        UserResponseDto response = new UserResponseDto(
+                updatedUser.getId(),
+                updatedUser.getEmail(),
+                updatedUser.getUsername(),
+                updatedUser.getImage()
+        );
+        return ResponseEntity.ok(response);
     }
 
 }
