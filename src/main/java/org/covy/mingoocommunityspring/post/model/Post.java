@@ -34,8 +34,7 @@ public class Post {
     private String title;
 
     @NotNull
-    @Lob
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Size(max = 255)

@@ -32,7 +32,7 @@ public class PostService {
 
     // 게시글 검색 (제목 또는 내용)
     public Page<PostListResponseDto> searchPosts(String keyword, Pageable pageable) {
-        return postRepository.findByTitleOrContentContaining(keyword, pageable)
+        return postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(keyword, keyword, pageable)
                 .map(PostListResponseDto::new);
     }
 
